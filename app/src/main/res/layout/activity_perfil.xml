@@ -23,7 +23,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/textViewPerfilPicture"
+                android:id="@+id/imageViewPerfilPicture"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.40"
