@@ -280,6 +280,7 @@ public class InicioFragment extends Fragment implements OnMapReadyCallback, Loca
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
+      
     }
 
 

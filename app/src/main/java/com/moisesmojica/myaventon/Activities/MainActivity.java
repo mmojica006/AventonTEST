@@ -1,10 +1,12 @@
 package com.moisesmojica.myaventon.Activities;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,56 +17,33 @@ import com.moisesmojica.myaventon.Fragment.InicioFragment;
 import com.moisesmojica.myaventon.Fragment.PerfilFragment;
 import com.moisesmojica.myaventon.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener  {
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+    public DrawerLayout drawerLayout;
+    public NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setToolbar();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar,0, 0);
+        drawerLayout.setDrawerListener(toggle);
+        toggle.syncState();
+
+
+
         navigationView = findViewById(R.id.navview);
-        setFragmentByDefault();
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-              boolean fragmentTransaction = false;
-
-                Fragment fragment = null;
-
-                switch (item.getItemId()){
-                    case R.id.menu_inicio:
-                        fragment = new InicioFragment();
-                        fragmentTransaction = true;
-                        break;
-
-                    case R.id.menu_perfil:
-                        fragment = new PerfilFragment();
-                        fragmentTransaction = true;
-                        break;
-                }
-
-                if (fragmentTransaction){
-                    changeFragment(fragment,item);
-                    drawerLayout.closeDrawers();
-                }
-
-                return true;
-            }
-        });
-
-    }
+        navigationView.setNavigationItemSelectedListener(this);
 
 
-    private void setToolbar() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_home);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+
     }
 
     @Override
@@ -78,19 +57,29 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void setFragmentByDefault(){
-        changeFragment(new InicioFragment(),navigationView.getMenu().getItem(0));
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-    }
+        Intent i;
 
-    private void changeFragment(Fragment fragment, MenuItem item){
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.content_frame,fragment)
-                .commit();
-        item.setChecked(true);
-        getSupportActionBar().setTitle(item.getTitle());
 
+        switch (item.getItemId()){
+            case R.id.menu_inicio:
+
+                i = new Intent(getApplicationContext(),InicioActivity.class);
+                startActivity(i);
+                break;
+            case R.id.menu_perfil:
+                i = new Intent(getApplicationContext(),PerfilActivity.class);
+                startActivity(i);
+                break;
+        }
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
