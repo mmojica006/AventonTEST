@@ -35,6 +35,7 @@ import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
 import com.moisesmojica.myaventon.R;
 import com.moisesmojica.myaventon.api.Api;
 import com.moisesmojica.myaventon.api.RequestHandler;
+import com.moisesmojica.myaventon.helper.Constant;
 import com.moisesmojica.myaventon.models.Result;
 
 import org.json.JSONArray;
@@ -50,6 +51,7 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
     private MapView mapView;
     private MapboxMap mapboxMap;
     private  String TAG ="TAG";
+
 
     List<Result> resultList;
 
@@ -93,9 +95,10 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
         int id = item.getItemId();
         if (id == R.id.action_menu_inicio) {
             HashMap<String,String> map = new HashMap<String, String>();
-            map.put("name","Testing name");
-            map.put("lat","12.126934");
-            map.put("long","-86.2712677");
+            map.put("name", Constant.USER_NOMBRE);
+
+            map.put("lat",Double.toString(originLocation.getLatitude()));
+            map.put("long",Double.toString(originLocation.getLongitude()));
 
             sendPost(map);
             return true;
@@ -296,6 +299,7 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
             try {
                 JSONObject object = new JSONObject(s);
                 if(object.getInt("error")== 0 ){
+                    Toast.makeText(getBaseContext(),getString(R.string.smgResultPost),Toast.LENGTH_LONG).show();
                     refreshContenidoList(object.getJSONArray("result"));
                 }
             }catch (JSONException e){

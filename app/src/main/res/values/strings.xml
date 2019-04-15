@@ -3,6 +3,7 @@
     <string name="access_token">pk.eyJ1IjoibW1vamljYSIsImEiOiJjanVmdWowa20waHAyM3lwOGI5ZWJrMnBpIn0.QsYDGx4FaRbtKqVD9MmRew</string>
     <string name="smsPermissionGPS">Por favor dar permisos para obtener la ubicación</string>
     <string name="labelTextPost">Hacer POST</string>
+    <string name="smgResultPost">Resultados enviados satisfactoriamente!</string>
 
 
 </resources>
