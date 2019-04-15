@@ -13,9 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activities.PerfilActivity"></activity>
-        <activity android:name=".Activities.SecondActivity" />
-        <activity android:name=".Activities.InicioActivity">
+        <activity android:name=".activities.PerfilActivity"></activity>
+        <activity android:name=".activities.InicioActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

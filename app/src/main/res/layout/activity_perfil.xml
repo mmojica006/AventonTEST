@@ -4,12 +4,78 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.PerfilActivity">
-    <TextView
+    tools:context=".activities.PerfilActivity">
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="PERFIL"
-        android:gravity="center"
-        android:textSize="16dp"
-        />
+        android:orientation="vertical"
+        android:shadowColor="@color/colorShadow"
+        android:shadowDx="10"
+        android:shadowDy="10"
+        android:shadowRadius="5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/textViewPerfilPicture"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.40"
+                android:src="@drawable/clie"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.60"
+                android:orientation="vertical"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/textViewPerfilNombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nombre"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:layout_margin="20dp"/>
+
+                <TextView
+                    android:id="@+id/textViewPerfilApellido"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Apellido"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:layout_margin="20dp"/>
+
+                <TextView
+                    android:id="@+id/textViewPerfilCorreo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Correo"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="@color/colorPrimaryText"/>
+                <TextView
+                    android:id="@+id/textViewPerfilCelular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Apellido"
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:layout_margin="20dp"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
