@@ -4,6 +4,7 @@
     <string name="smsPermissionGPS">Por favor dar permisos para obtener la ubicación</string>
     <string name="labelTextPost">Hacer POST</string>
     <string name="smgResultPost">Resultados enviados satisfactoriamente!</string>
-
+    <string name="smgExecutePost">Ejecutando proceso!</string>
+    <string name="smgNotOnline">No hay acceso a internet!</string>
 
 </resources>

@@ -1,7 +1,10 @@
 package com.moisesmojica.myaventon.activities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.location.Location;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -16,6 +19,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineListener;
 import com.mapbox.android.core.location.LocationEnginePriority;
@@ -42,6 +47,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,13 +70,12 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Mapbox.getInstance(this, getString(R.string.access_token));
-        //setContentView(R.layout.activity_inicio);
 
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View contentView = inflater.inflate(R.layout.activity_inicio, null, false);
 
+        loadData();
 
-        resultList = new ArrayList<>();
         drawerLayout.addView(contentView, 0);
         navigationView.setCheckedItem(R.id.menu_inicio);
 
@@ -79,7 +84,11 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
+
+        if(isOnLine())
         mapView.getMapAsync(this );
+        else
+            Toast.makeText(getBaseContext(),getString(R.string.smgNotOnline),Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -94,14 +103,20 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
 
         int id = item.getItemId();
         if (id == R.id.action_menu_inicio) {
-            HashMap<String,String> map = new HashMap<String, String>();
-            map.put("name", Constant.USER_NOMBRE);
 
-            map.put("lat",Double.toString(originLocation.getLatitude()));
-            map.put("long",Double.toString(originLocation.getLongitude()));
+            if(isOnLine()){
+                HashMap<String,String> map = new HashMap<String, String>();
+                map.put("name", Constant.USER_NOMBRE);
 
-            sendPost(map);
-            return true;
+                map.put("lat",Double.toString(originLocation.getLatitude()));
+                map.put("long",Double.toString(originLocation.getLongitude()));
+
+                sendPost(map);
+                return true;
+            }else{
+                Toast.makeText(getBaseContext(),getString(R.string.smgNotOnline),Toast.LENGTH_LONG).show();
+            }
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -121,7 +136,6 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
         }else{
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
-
         }
     }
 
@@ -141,7 +155,6 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
             originLocation = lastLocation;
            cameraPosition(lastLocation);
 
-
         }else{
             locationEngine.addLocationEngineListener(this);
         }
@@ -158,7 +171,6 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
         locationLayerPlugin.setLocationLayerEnabled(true);
         locationLayerPlugin.setCameraMode(CameraMode.TRACKING);
         locationLayerPlugin.setRenderMode(RenderMode.NORMAL);
-
     }
 
     @Override
@@ -174,7 +186,6 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
             originLocation = location;
             cameraPosition(location);
         }
-
     }
 
     @Override
@@ -241,8 +252,6 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
         mapView.onLowMemory();
     }
 
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -279,12 +288,9 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
 
     private class PerformNetworkRequest extends AsyncTask<Void, Void, String> {
 
-
         String url;
         HashMap<String, String> params;
-
         int requestCode;
-
 
         PerformNetworkRequest(String url, HashMap<String, String> params, int requestCode){
             this.url = url;
@@ -292,6 +298,11 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
             this.requestCode = requestCode;
         }
 
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(getBaseContext(),getString(R.string.smgExecutePost),Toast.LENGTH_LONG).show();
+        }
         @Override
         protected void onPostExecute(String s) {
 
@@ -306,7 +317,6 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
                 e.printStackTrace();
             }
         }
-
 
         @Override
         protected String doInBackground(Void... voids) {
@@ -339,7 +349,29 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
 
         }
         addToMap();
+        saveData();
     }
+
+    private void saveData() {
+        SharedPreferences sharedPreferences= getSharedPreferences("shared preferences",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String json = gson.toJson(resultList);
+        editor.putString("Result list",json);
+        editor.apply();
+    }
+    private void loadData(){
+        SharedPreferences sharedPreferences= getSharedPreferences("shared preferences",MODE_PRIVATE);
+        Gson gson = new Gson();
+        String json = sharedPreferences.getString("Result list",null);
+        Type type = new TypeToken<ArrayList<Result>>() {}.getType();
+        resultList = gson.fromJson(json,type);
+
+        if (resultList ==null){
+            resultList = new ArrayList<>();
+        }
+
+       }
 
     private void addToMap() {
 
@@ -350,11 +382,17 @@ public class InicioActivity extends MainActivity  implements OnMapReadyCallback,
                         .title(resultList.get(i).getName())
                         .snippet(resultList.get(i).getName())
                         .position(new LatLng(Double.valueOf(resultList.get(i).getLt()), Double.valueOf(resultList.get(i).getLg()))));
-
-
             }
-
         }
     }
+    public boolean isOnLine(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if (networkInfo != null && networkInfo.isConnectedOrConnecting()){
+            return  true;
+        }else{
+            return  false;
+        }
 
+    }
 }
